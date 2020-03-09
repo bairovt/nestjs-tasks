@@ -38,12 +38,12 @@ export class TasksService {
     return `Task deleted`;
   }
 
-  updateTasksStatus(id: string, updateTasksStatusDto: UpdateTasksStatusDto): Task | string {
-    const index = this.tasks.findIndex(task => task.id === id);
-    if (index === -1) {
+  updateTaskStatus(id: string, status: TaskStatus): Task | string {
+    const task = this.getTaksById(id);
+    if (!task) {
       return '404 error: there is no task with such id'
     }
-    this.tasks[index].status = updateTasksStatusDto.status;
-    return this.tasks[index];
+    task.status = status;
+    return task;
   }
 }
