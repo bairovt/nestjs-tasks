@@ -1,6 +1,12 @@
-import { TaskStatus } from "../task.model";
+import { TaskStatus } from '../task.model';
+import { IsOptional, IsIn, IsNotEmpty } from 'class-validator';
 
 export class FilterTasksDto {
+  @IsOptional()
+  @IsIn(Object.values(TaskStatus))
   status: TaskStatus;
-  search: string
+
+  @IsOptional()
+  @IsNotEmpty()
+  search: string;
 }
