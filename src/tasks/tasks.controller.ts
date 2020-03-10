@@ -9,6 +9,7 @@ import {
   Query,
   UsePipes,
   ValidationPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TaskStatus } from './enums/task-status.enum';
@@ -19,7 +20,7 @@ import { Task } from './entities/task.entity';
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(private readonly tasksService: TasksService) { }
 
   // @Get('/')
   // getTasks(@Query(ValidationPipe) filterTasksDto: FilterTasksDto): Task[] {
@@ -27,7 +28,7 @@ export class TasksController {
   // }
 
   @Get('/:id')
-  getTaskById(@Param('id') id: number): Promise<Task> {
+  getTaskById(@Param('id', ParseIntPipe) id: number): Promise<Task> {
     return this.tasksService.getTaksById(id);
   }
 
@@ -44,7 +45,7 @@ export class TasksController {
 
   @Patch('/:id/status')
   updateTaskStatus(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body('status', TaskStatusValidationPipe) status: TaskStatus,
   ): Promise<Task> {
     return this.tasksService.updateTaskStatus(id, status);

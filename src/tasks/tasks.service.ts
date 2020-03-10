@@ -11,7 +11,7 @@ export class TasksService {
   constructor(
     @InjectRepository(TaskRepo)
     private taskRepo: TaskRepo,
-  ) {}
+  ) { }
   // getAllTasks(): Task[] {
   //   return this.tasks;
   // }
@@ -43,8 +43,10 @@ export class TasksService {
   }
 
   async deleteTask(id: number): Promise<void> {
-    const task = await this.getTaksById(id);
-    await this.taskRepo.remove(task);
+    const result = await this.taskRepo.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException();
+    }
   }
 
   async updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
