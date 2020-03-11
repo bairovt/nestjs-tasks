@@ -20,12 +20,14 @@ import { Task } from './entities/task.entity';
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) { }
+  constructor(private readonly tasksService: TasksService) {}
 
-  // @Get('/')
-  // getTasks(@Query(ValidationPipe) filterTasksDto: FilterTasksDto): Task[] {
-  //   return this.tasksService.getTasks(filterTasksDto);
-  // }
+  @Get('/')
+  getTasks(
+    @Query(ValidationPipe) filterTasksDto: FilterTasksDto,
+  ): Promise<Task[]> {
+    return this.tasksService.getTasks(filterTasksDto);
+  }
 
   @Get('/:id')
   getTaskById(@Param('id', ParseIntPipe) id: number): Promise<Task> {
