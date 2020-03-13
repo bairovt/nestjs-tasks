@@ -1,23 +1,24 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { AuthCredentialsDto } from '../dto/auth-credentials.dto';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException, InternalServerErrorException, ConflictException } from '@nestjs/common';
 
 @EntityRepository(User)
 export class UserRepo extends Repository<User> {
-  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<User> {
+  async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialsDto;
     const user = new User();
     user.username = username;
     user.password = password;
-
-    await user.save(); // Nestjs does not catch QueryFailedError error on unique constraint violation causing UnhandledPromiseRejectionWarning
-    // try {
-    //   await user.save();
-    // } catch (error) {
-    //   console.error(error);
-    // }
-    return user;
+    try {
+      await user.save();
+    } catch (error) {
+      if (error.message.includes('duplicate key')) {
+        throw new ConflictException('username already exists');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
   }
 
   async signIn(authCredentialsDto: AuthCredentialsDto): Promise<User> {

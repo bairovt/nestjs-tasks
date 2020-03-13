@@ -5,13 +5,13 @@ import { User } from './entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @Post('/signup')
-  async signUp(
+  signUp(
     @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto,
   ): Promise<void> {
-    this.authService.signUp(authCredentialsDto);
+    return this.authService.signUp(authCredentialsDto);
   }
 
   @Post('/signin')

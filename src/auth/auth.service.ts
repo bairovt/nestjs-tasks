@@ -9,9 +9,9 @@ export class AuthService {
   constructor(
     @InjectRepository(UserRepo)
     private userRepo: UserRepo,
-  ) {}
+  ) { }
 
-  async signUp(authCredentials: AuthCredentialsDto): Promise<User> {
+  signUp(authCredentials: AuthCredentialsDto): Promise<void> {
     return this.userRepo.signUp(authCredentials);
   }
 
