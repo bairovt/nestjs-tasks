@@ -1,7 +1,8 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { AuthCredentialsDto } from '../dto/auth-credentials.dto';
-import { NotFoundException, BadRequestException, InternalServerErrorException, ConflictException } from '@nestjs/common';
+import { NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt'
 
 @EntityRepository(User)
 export class UserRepo extends Repository<User> {
@@ -9,7 +10,8 @@ export class UserRepo extends Repository<User> {
     const { username, password } = authCredentialsDto;
     const user = new User();
     user.username = username;
-    user.password = password;
+    user.salt = await bcrypt.genSalt();
+    user.password = await bcrypt.hash(password, user.salt);
     try {
       await user.save();
     } catch (error) {
@@ -34,4 +36,6 @@ export class UserRepo extends Repository<User> {
     }
     return user;
   }
+
+
 }
