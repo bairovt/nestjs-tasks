@@ -1,11 +1,12 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { AuthCredentialsDto } from '../dto/auth-credentials.dto';
-import { NotFoundException, InternalServerErrorException, ConflictException } from '@nestjs/common';
+import { NotFoundException, InternalServerErrorException, ConflictException, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt'
 
 @EntityRepository(User)
 export class UserRepo extends Repository<User> {
+
   async signUp(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialsDto;
     const user = new User();
@@ -23,19 +24,13 @@ export class UserRepo extends Repository<User> {
     }
   }
 
-  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<User> {
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string> {
     const { username, password } = authCredentialsDto;
-    const query = this.createQueryBuilder('user');
-    query.where('user.username = :username AND user.password = :password', {
-      username,
-      password,
-    });
-    const user = await query.getOne();
-    if (!user) {
-      throw new NotFoundException('user not found');
+    const user = await this.findOne({ username });
+    if (user && await user.validatePassword(password)) {
+      return user.username;
+    } else {
+      throw new UnauthorizedException('Invalid credentials');
     }
-    return user;
   }
-
-
 }
