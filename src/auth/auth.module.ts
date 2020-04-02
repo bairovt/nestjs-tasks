@@ -15,7 +15,7 @@ import { configModule } from '../../configure.root';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: {
-        expiresIn: 3600,
+        expiresIn: 3600 * 5, // 5h
       },
     }),
     TypeOrmModule.forFeature([UserRepo]),

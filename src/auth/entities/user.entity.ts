@@ -4,8 +4,10 @@ import {
   PrimaryGeneratedColumn,
   Entity,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Task } from 'src/tasks/entities/task.entity';
 
 @Entity()
 @Unique(['username'])
@@ -22,7 +24,14 @@ export class User extends BaseEntity {
   @Column()
   salt: string;
 
+  @OneToMany(
+    type => Task,
+    task => task.user,
+    { eager: true },
+  )
+  tasks: Task[];
+
   async validatePassword(pass: string) {
-    return await bcrypt.compare(pass, this.password)
+    return await bcrypt.compare(pass, this.password);
   }
 }
