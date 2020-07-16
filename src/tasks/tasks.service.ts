@@ -33,7 +33,7 @@ export class TasksService {
   }
 
   async deleteTask(id: number, user: User): Promise<void> {
-    const result = await this.taskRepo.delete({ id, userId: user.id });
+    const result = await this.taskRepo.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException();
     }
